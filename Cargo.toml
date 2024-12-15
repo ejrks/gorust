@@ -1,0 +1,13 @@
+[package]
+name = "mvecops"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+godot = "0.2.0"
+
+[target.aarch64-linux-android]
+linker = "lld"
