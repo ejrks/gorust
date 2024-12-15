@@ -1,1 +1,1 @@
-pub mod godottest;
+pub mod object_with_data;
