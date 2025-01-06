@@ -1,6 +1,8 @@
 use mvecops::beorc::def::DefinitionUnit;
 use mvecops::beorc::def::TrainingUnit;
 use mvecops::beorc::database::LivingDataUnit;
+use mvecops::beorc::medium::Medium;
+use mvecops::beorc::def::Trace;
 
 use godot::prelude::*;
 use godot::classes::Node3D;
@@ -89,6 +91,12 @@ impl GTrainingUnit {
         let new_definition: Gd<GDefinitionUnit> = Gd::from_object(new_object);
         return new_definition;
     }
+
+    
+    #[func]
+    fn q_base_name(&self) -> GString {
+        return GString::from(self.training_unit.base.id.clone());
+    }
 }
 
 #[derive(GodotClass)]
@@ -135,4 +143,49 @@ impl GLivingDataUnit {
     }
 }
 
+#[derive(GodotClass)]
+#[class(base=Node3D)]
+pub struct GMedium {
+    pub medium_instance: Medium,
+}
+
+#[godot_api]
+impl INode3D for GMedium {
+    fn init(base: Base<Node3D>) -> Self {
+        Self {
+            medium_instance: Medium::empty(),
+        }
+    }
+}
+
+
+#[godot_api]
+impl GMedium {
+    #[func]
+    fn setup(&mut self, data_unit: Gd<GLivingDataUnit>) {
+        self.medium_instance = Medium::new(data_unit.bind().data.clone());
+    }
+    #[func]
+    fn reset_search(&mut self) {
+        self.medium_instance.reset_search();
+    }
+    #[func]
+    fn feed_trace(&mut self, indexes: Array<i64>, time_stamp: i64, resolution: i64) {
+        let mut formatted_data_array: Vec<i64> = Vec::new();
+        for entry in indexes.iter_shared() {
+            formatted_data_array.push(entry);
+        }
+        let new_trace: Trace = Trace::new(time_stamp, formatted_data_array ,resolution);
+        self.medium_instance.feed_trace(new_trace);
+    }
+    #[func]
+    fn get_predictions(&self) -> Array<GString> {
+        let result = self.medium_instance.get_list_of_predictions().0;
+        let mut new_array: Array<GString> = Array::new();
+        for entry in result {
+            new_array.push(&GString::from(entry));
+        }
+        return new_array;
+    }
+}
 
