@@ -1,5 +1,6 @@
 use mvecops::beorc::def::DefinitionUnit;
 use mvecops::beorc::def::TrainingUnit;
+use mvecops::beorc::database::LivingDataUnit;
 
 use godot::prelude::*;
 use godot::classes::Node3D;
@@ -76,8 +77,62 @@ impl GTrainingUnit {
     fn start_training_w_report(&mut self) {
         self.training_unit.train_w_report();
     }
+
+    #[func]
+    fn training_and_return(&mut self) -> Gd<GDefinitionUnit> {
+        let result = self.training_unit.train_w_report();
+
+        let new_object = GDefinitionUnit {
+            definition_unit: result,
+        };
+
+        let new_definition: Gd<GDefinitionUnit> = Gd::from_object(new_object);
+        return new_definition;
+    }
 }
 
+#[derive(GodotClass)]
+#[class(base=Node3D)]
+pub struct GLivingDataUnit {
+    pub data: LivingDataUnit,
+}
 
+#[godot_api]
+impl INode3D for GLivingDataUnit {
+    fn init(base: Base<Node3D>) -> Self {
+        Self {
+            data: LivingDataUnit::empty(),
+        }
+    }
+}
+
+#[godot_api]
+impl GLivingDataUnit {
+    #[func]
+    fn load_from_file(&mut self, quick_target: GString, heavy_target: GString, resolution: i64) {
+        self.data.load_from_file(quick_target.to_string(), heavy_target.to_string(), resolution);
+    }
+    #[func]
+    fn dump_to_file(&mut self, append_name: GString) {
+        self.data.dump_to_file(append_name.to_string());
+    }
+
+    #[func]
+    fn new_or_update_definition(&mut self, input_data: Gd<GDefinitionUnit>) {
+        let unpacked_definition: &DefinitionUnit = &input_data.bind().definition_unit;
+        let definition_name = unpacked_definition.id.to_string();
+        let mut found_old_entry: bool = false;
+        for entry in &mut self.data.definitions {
+            if (entry.id.to_string() == definition_name) {
+                *entry = unpacked_definition.clone();
+                found_old_entry = true;
+                break;
+            }
+        }
+        if !found_old_entry {
+            self.data.definitions.push(unpacked_definition.clone());
+        }
+    }
+}
 
 
