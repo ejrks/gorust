@@ -11,3 +11,4 @@ pub mod godottest;
 
 pub mod dataparser;
 pub mod tracetrainer;
+pub mod golab;

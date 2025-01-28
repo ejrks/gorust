@@ -121,6 +121,10 @@ impl GLivingDataUnit {
         self.data.load_from_file(quick_target.to_string(), heavy_target.to_string(), resolution);
     }
     #[func]
+    fn load_from_data(&mut self, quick_target: GString, heavy_target: GString, resolution: i64) {
+        self.data.load_from_data(quick_target.to_string(), heavy_target.to_string(), resolution);
+    }
+    #[func]
     fn dump_to_file(&mut self, append_name: GString) {
         self.data.dump_to_file(append_name.to_string());
     }
@@ -140,6 +144,11 @@ impl GLivingDataUnit {
         if !found_old_entry {
             self.data.definitions.push(unpacked_definition.clone());
         }
+    }
+
+    #[func]
+    fn q_number_of_definitions(&self) -> i64 {
+        return self.data.definitions.len() as i64;
     }
 }
 

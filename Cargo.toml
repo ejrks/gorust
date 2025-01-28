@@ -9,6 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 godot = "0.2.0"
 mvecops = { path = "../mvecops" }
+uotech = { path = "../uotech" }
 
 [target.aarch64-linux-android]
 linker = "lld"
