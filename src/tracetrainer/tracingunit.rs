@@ -43,6 +43,29 @@ impl GDefinitionUnit {
     }
 
     #[func]
+    fn get_key(&self) -> GString {
+        let retrieved_key = &self.definition_unit.id;
+        return GString::from(retrieved_key);
+    }
+    #[func]
+    fn get_trace(&self, at_index: i64) -> Vector2i {
+        let retrieved_trace = &self.definition_unit.traces[at_index as usize];
+        Vector2i {
+            x: retrieved_trace.trace.x as i32,
+            y: retrieved_trace.trace.y as i32,
+        }
+    }
+    #[func]
+    fn get_points(&self, at_index: i64) -> Array<i32> {
+        let retrieved_points = &self.definition_unit.traces[at_index as usize].indexes;
+
+        let mut results_array: Array<i32> = Array::new();
+        for entry in retrieved_points {
+            results_array.push(*entry as i32);
+        }
+        return results_array;
+    }
+    #[func]
     fn q_trace_number(&self) -> i64 {
         return self.definition_unit.traces.len() as i64;
     }
@@ -149,6 +172,18 @@ impl GLivingDataUnit {
     #[func]
     fn q_number_of_definitions(&self) -> i64 {
         return self.data.definitions.len() as i64;
+    }
+
+    #[func]
+    fn get_single_definition_item(&self, index_entry: i64) -> Gd<GDefinitionUnit> {
+        let actual_index = (index_entry % self.data.definitions.len() as i64) as usize;
+
+        let new_object = GDefinitionUnit {
+            definition_unit: self.data.definitions[actual_index].clone(),
+        };
+
+        let new_definition: Gd<GDefinitionUnit> = Gd::from_object(new_object);
+        return new_definition;
     }
 }
 
