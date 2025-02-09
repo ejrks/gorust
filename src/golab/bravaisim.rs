@@ -9,9 +9,9 @@ use uotech::materials::bravais::UnitCell;
 #[derive(GodotConvert, Var, Export)]
 #[godot(via = i64)]
 pub enum GCellType {
-    BCC,
-    FCC,
-    HC,
+    BCC = 0,
+    FCC = 1,
+    HC = 2,
 }
 
 #[derive(GodotClass)]
