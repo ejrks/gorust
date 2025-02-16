@@ -5,6 +5,8 @@ use godot::classes::INode3D;
 
 use uotech::aspace::basis::Basis;
 
+/// Godot interface for [`uotech::aspace::basis::Basis`].
+///
 #[derive(GodotClass)]
 #[class(base=Node3D)]
 pub struct GAlgebraBasis {
